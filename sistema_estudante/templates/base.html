@@ -1,0 +1,56 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Sistem Akademik FECT{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <!-- BoxIcons -->
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+</head>
+<body>
+    
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="brand">
+            <i class='bx bxs-graduation'></i>
+            <span>FECT - UNTL</span>
+        </div>
+
+        <ul class="nav-menu">
+            <li>
+                <a href="{% url 'painel' %}" class="nav-link {% if request.resolver_match.url_name == 'painel' %}active{% endif %}">
+                    <i class='bx bxs-dashboard'></i>
+                    <span>Painel (Dasbor)</span>
+                </a>
+            </li>
+            <li>
+                <a href="#" class="nav-link">
+                    <i class='bx bxs-group'></i>
+                    <span>Estudante (Mahasiswa)</span>
+                </a>
+            </li>
+            <li>
+                <a href="#" class="nav-link">
+                    <i class='bx bxs-briefcase'></i>
+                    <span>Dosente (Dosen)</span>
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'absensia:sesaun_lista' %}" class="nav-link {% if 'absensia' in request.resolver_match.view_name %}active{% endif %}">
+                    <i class='bx bxs-calendar-event'></i>
+                    <span>Sesaun (Jadwal)</span>
+                </a>
+            </li>
+        </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+</body>
+</html>

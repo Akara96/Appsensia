@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %}Sesaun Sira - FECT{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 2rem;">
+    <h2>Jadwal Sesaun (Mata Kuliah)</h2>
+    <p style="color: var(--text-secondary); margin-top: 0.5rem;">Pilih sesi untuk membuka QR Code Presensi</p>
+</div>
+
+<div class="glass-card">
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Data</th>
+                    <th>Kadeira</th>
+                    <th>Dosente</th>
+                    <th>Sala</th>
+                    <th>Tempu</th>
+                    <th>Aksaun</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for sesaun in sesaun_sira %}
+                <tr>
+                    <td>{{ sesaun.data|date:"d M Y" }}</td>
+                    <td style="font-weight: 500;">{{ sesaun.kadeira }}</td>
+                    <td>{{ sesaun.dosente.naran }}</td>
+                    <td>{{ sesaun.sala.naran }}</td>
+                    <td><span class="badge badge-primary">{{ sesaun.tempu_hahu|time:"H:i" }} - {{ sesaun.tempu_remata|time:"H:i" }}</span></td>
+                    <td>
+                        <a href="{% url 'absensia:sesaun_qr' sesaun.pk %}" class="btn btn-outline" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">
+                            <i class='bx bx-qr'></i> Loke QR Code
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" style="text-align: center; color: var(--text-secondary); padding: 2rem;">
+                        La iha sesaun ne'ebé rejistu.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

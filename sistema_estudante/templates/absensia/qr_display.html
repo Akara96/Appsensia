@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+
+{% block title %}QR Presensa - {{ sesaun.kadeira }}{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: center; align-items: center; min-height: 70vh;">
+    <div class="glass-card qr-container" style="max-width: 500px; width: 100%;">
+        <h2 style="margin-bottom: 0.5rem; text-align: center;">{{ sesaun.kadeira }}</h2>
+        <p style="color: var(--text-secondary); text-align: center; margin-bottom: 1rem;">
+            {{ sesaun.dosente.naran }} | {{ sesaun.sala.naran }}<br>
+            {{ sesaun.tempu_hahu|time:"H:i" }} - {{ sesaun.tempu_remata|time:"H:i" }}
+        </p>
+
+        <div class="qr-box" id="qrcode"></div>
+
+        <p style="color: var(--accent-color); font-weight: 500; font-size: 1.1rem; text-align: center; margin-top: 1rem;">
+            Scan kódigu ne'e atu halo presensa
+        </p>
+        
+        <div style="margin-top: 2rem; display: flex; gap: 1rem; align-items: center; justify-content: center; flex-direction: column;">
+            <div style="width: 100%; max-width: 256px; background-color: var(--card-bg); height: 8px; border-radius: 4px; overflow: hidden; position: relative;">
+                <div id="refresh-bar" style="width: 100%; height: 100%; background-color: var(--accent-color); transition: width 1s linear;"></div>
+            </div>
+            <p style="font-size: 0.9rem; color: var(--text-secondary); margin-top: 0.5rem;" id="refresh-text">Token auto-refresh iha 15s</p>
+
+            <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                <a href="{% url 'absensia:sesaun_lista' %}" class="btn btn-outline"><i class='bx bx-arrow-back'></i> Fila Fali</a>
+                <button onclick="manualRefresh()" class="btn btn-primary"><i class='bx bx-refresh'></i> Refresh Token</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+    // Data token (kodigu_qr) hosi database
+    var tokenData = "{{ sesaun.kodigu_qr }}";
+    
+    // Generate QR Code
+    var qrcode = new QRCode(document.getElementById("qrcode"), {
+        text: tokenData,
+        width: 256,
+        height: 256,
+        colorDark : "#000000",
+        colorLight : "#ffffff",
+        correctLevel : QRCode.CorrectLevel.H
+    });
+
+    const refreshInterval = 15; // sekundu
+    let countdown = refreshInterval;
+    const refreshUrl = "{% url 'absensia:sesaun_qr_refresh' sesaun.id %}";
+
+    function updateProgressBar() {
+        const bar = document.getElementById("refresh-bar");
+        const text = document.getElementById("refresh-text");
+        
+        countdown--;
+        let percentage = (countdown / refreshInterval) * 100;
+        bar.style.width = percentage + "%";
+        text.innerText = `Token auto-refresh iha ${countdown}s`;
+
+        if (countdown <= 0) {
+            manualRefresh();
+        }
+    }
+
+    function manualRefresh() {
+        fetch(refreshUrl)
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    // Update QR
+                    qrcode.clear();
+                    qrcode.makeCode(data.token);
+                    // Reset timer
+                    countdown = refreshInterval;
+                    document.getElementById("refresh-bar").style.width = "100%";
+                    document.getElementById("refresh-text").innerText = `Token auto-refresh iha ${countdown}s`;
+                }
+            })
+            .catch(error => console.error('Error refreshing token:', error));
+    }
+
+    // Start auto-refresh timer
+    setInterval(updateProgressBar, 1000);
+</script>
+{% endblock %}

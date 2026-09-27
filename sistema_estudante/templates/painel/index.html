@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div style="margin-bottom: 2rem;">
+    <h2>Bem-vindo, Administrador</h2>
+    <p style="color: var(--text-secondary); margin-top: 0.5rem;">Sistem Informasi Akademik FECT - Universidade Nacional Timor Lorosa'e</p>
+</div>
+
+<div class="stats-grid">
+    <div class="glass-card">
+        <div class="stat-label">Total Estudante Sira</div>
+        <div class="stat-value">{{ total_estudante|default:"0" }}</div>
+        <p style="color: var(--accent-color); font-size: 0.85rem;"><i class='bx bx-trending-up'></i> Ativu iha semestre ne'e</p>
+    </div>
+    
+    <div class="glass-card">
+        <div class="stat-label">Total Dosente Sira</div>
+        <div class="stat-value">{{ total_dosente|default:"0" }}</div>
+        <p style="color: var(--text-secondary); font-size: 0.85rem;">Husi 5 Departamentu</p>
+    </div>
+
+    <div class="glass-card">
+        <div class="stat-label">Sesaun Ohin Loron</div>
+        <div class="stat-value">{{ total_sesaun_ohin|default:"0" }}</div>
+        <p style="color: var(--primary-color); font-size: 0.85rem;">Jadwal ba loron ohin</p>
+    </div>
+</div>
+
+<div class="glass-card">
+    <h3 style="margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center;">
+        Sesaun Haluha (Kelas Berjalan)
+        <a href="#" class="btn btn-outline" style="font-size: 0.85rem; padding: 0.5rem 1rem;">Hare Hotu</a>
+    </h3>
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Kadeira</th>
+                    <th>Dosente</th>
+                    <th>Sala</th>
+                    <th>Tempu</th>
+                    <th>Status Presensa</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for sesaun in sesaun_sira %}
+                <tr>
+                    <td style="font-weight: 500;">{{ sesaun.kadeira }}</td>
+                    <td>{{ sesaun.dosente.naran }}</td>
+                    <td>{{ sesaun.sala.naran }}</td>
+                    <td><span class="badge badge-primary">{{ sesaun.tempu_hahu|time:"H:i" }} - {{ sesaun.tempu_remata|time:"H:i" }}</span></td>
+                    <td>
+                        <div style="display: flex; gap: 0.5rem; align-items: center;">
+                            <div style="flex: 1; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden;">
+                                <div style="width: 75%; height: 100%; background: var(--accent-color);"></div>
+                            </div>
+                            <span style="font-size: 0.8rem; color: var(--text-secondary);">75%</span>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" style="text-align: center; color: var(--text-secondary); padding: 2rem;">
+                        La iha sesaun ba ohin loron.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
